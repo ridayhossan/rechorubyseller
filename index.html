@@ -626,52 +626,105 @@
 
   <div class="form-card reveal">
     <form
-      action="https://formspree.io/f/mqengnba"
-      method="POST"
-      enctype="multipart/form-data"
-      id="orderForm"
-    >
+  action="https://formspree.io/f/mqengnba"
+  method="POST"
+  enctype="multipart/form-data"
+  id="orderForm"
+>
 
-      <div class="form-grid">
-        <div class="fg">
-          <label for="agency">Agency Name</label>
-          <input type="text" id="agency" name="agency_name" placeholder="Your Agency Name" required/>
+  <div class="form-grid">
+
+    <div class="fg">
+      <label for="agency">Agency Name</label>
+      <input
+        type="text"
+        id="agency"
+        name="agency_name"
+        placeholder="Your Agency Name"
+        required
+      />
+    </div>
+
+    <div class="fg">
+      <label for="recho-id">Recho ID Number</label>
+      <input
+        type="text"
+        id="recho-id"
+        name="recho_id"
+        placeholder="e.g. RCH-000000"
+        required
+      />
+    </div>
+
+    <div class="fg">
+      <label for="epay-email">EPAY Gmail ID</label>
+      <input
+        type="email"
+        id="epay-email"
+        name="epay_gmail"
+        placeholder="yourmail@gmail.com"
+        required
+      />
+    </div>
+
+    <div class="fg">
+      <label for="package">Package Selection</label>
+
+      <select id="package" name="package" required>
+        <option value="" disabled selected>
+          — Select a Package —
+        </option>
+
+        <option value="67 Lakh Ruby — $1005">
+          67 Lakh Ruby — $1,005 (+5% Bonus)
+        </option>
+
+        <option value="134 Lakh Ruby — $2010">
+          134 Lakh Ruby — $2,010 (+5% Bonus)
+        </option>
+
+        <option value="201 Lakh Ruby — $3015">
+          201 Lakh Ruby — $3,015 (+5% Bonus)
+        </option>
+      </select>
+    </div>
+
+    <div class="fg full">
+      <label>Payment Screenshot</label>
+
+      <div class="upload-zone">
+
+        <input
+          type="file"
+          id="screenshot"
+          name="screenshot"
+          accept="image/*"
+          required
+          onchange="showFile(this)"
+        />
+
+        <div class="upload-icon">📎</div>
+
+        <div class="upload-text">
+          Click to upload your screenshot
         </div>
 
-        <div class="fg">
-          <label for="recho-id">Recho ID Number</label>
-          <input type="text" id="recho-id" name="recho_id" placeholder="e.g. RCH-000000" required/>
+        <div class="upload-hint">
+          Single image only — JPG, PNG or WEBP
         </div>
 
-        <div class="fg">
-          <label for="epay-email">EPAY Gmail ID</label>
-          <input type="email" id="epay-email" name="epay_gmail" placeholder="yourmail@gmail.com" required/>
-        </div>
+        <div id="file-name"></div>
 
-        <div class="fg">
-          <label for="package">Package Selection</label>
-          <select id="package" name="package" required>
-            <option value="" disabled selected>— Select a Package —</option>
-            <option value="67 Lakh Ruby — $1005">67 Lakh Ruby — $1,005 (+5% Bonus)</option>
-            <option value="134 Lakh Ruby — $2010">134 Lakh Ruby — $2,010 (+5% Bonus)</option>
-            <option value="201 Lakh Ruby — $3015">201 Lakh Ruby — $3,015 (+5% Bonus)</option>
-          </select>
-        </div>
-
-        <div class="fg full">
-          <label>Payment Screenshot</label>
-          <div class="upload-zone">
-            <input type="file" id="screenshot" name="screenshot" accept="image/*" required onchange="showFile(this)"/>
-            <div class="upload-icon">📎</div>
-            <div class="upload-text">Click to upload your screenshot</div>
-            <div class="upload-hint">Single image only — JPG, PNG or WEBP</div>
-            <div id="file-name"></div>
-          </div>
-        </div>
       </div>
+    </div>
 
-      <button type="submit" class="btn-submit">Submit Order →</button>
-    </form>
+  </div>
+
+  <button type="submit" class="btn-submit">
+    Submit Order →
+  </button>
+
+</form>
   </div>
 </div>
 
@@ -723,62 +776,48 @@
 </footer>
 
 <script>
-  // Nav shadow on scroll
-  window.addEventListener('scroll', () => {
-    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 8);
-  });
+document.getElementById('orderForm').addEventListener('submit', async function(e) {
 
-  // Scroll reveal with IntersectionObserver
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  e.preventDefault();
 
-  // Select package from card button
-  function selectPkg(name) {
-    const sel = document.getElementById('package');
-    for (const opt of sel.options) {
-      if (opt.value.startsWith(name)) { sel.value = opt.value; break; }
+  const form = this;
+
+  const formData = new FormData(form);
+
+  try {
+
+    const response = await fetch(
+      "https://formspree.io/f/mqengnba",
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      }
+    );
+
+    if (response.ok) {
+
+      document.getElementById('popup').classList.add('open');
+
+      form.reset();
+
+      document.getElementById('file-name').textContent = '';
+
+    } else {
+
+      alert("Submission failed!");
+
     }
-    document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (error) {
+
+    alert("Something went wrong!");
+
   }
 
-  // Copy email
-  function copyEmail() {
-    navigator.clipboard.writeText('recholive.net@gmail.com').then(() => {
-      const btn = document.querySelector('.btn-copy');
-      btn.textContent = '✓ Copied!';
-      btn.style.background = 'var(--green)';
-      btn.style.color = '#fff';
-      btn.style.borderColor = 'var(--green)';
-      setTimeout(() => {
-        btn.textContent = 'Copy';
-        btn.style.background = '';
-        btn.style.color = '';
-        btn.style.borderColor = '';
-      }, 2200);
-    });
-  }
-
-  // File name display
-  function showFile(input) {
-    document.getElementById('file-name').textContent = input.files.length ? input.files[0].name : '';
-  }
-
-  // Popup
-  function closePopup() { document.getElementById('popup').classList.remove('open'); }
-
-  // Form submit
-  document.getElementById('orderForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    fetch('/', { method: 'POST', body: formData })
-      .finally(() => {
-        document.getElementById('popup').classList.add('open');
-        this.reset();
-        document.getElementById('file-name').textContent = '';
-      });
-  });
+});
 </script>
 </body>
 </html>

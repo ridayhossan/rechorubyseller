@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rechorubiseller — Fast & Trusted Ruby Delivery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --neon: #00c8ff;
+      --neon2: #0066ff;
+      --neon-glow: 0 0 8px #00c8ff, 0 0 20px #00c8ffaa, 0 0 40px #00c8ff55;
+      --neon-glow-strong: 0 0 10px #00c8ff, 0 0 30px #00c8ffcc, 0 0 60px #00c8ff66;
+      --dark: #010a14;
+      --dark2: #020e1c;
+      --dark3: #031526;
+      --glass: rgba(0,200,255,0.05);
+      --glass-border: rgba(0,200,255,0.2);
+      --text: #e0f4ff;
+      --text-dim: #6a9ab0;
+      --red: #ff3b3b;
+      --gold: #ffd700;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* SCANLINE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ANIMATED GRID BG */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridMove {
+      0% { transform: perspective(600px) rotateX(0deg) translateY(0); }
+      100% { transform: perspective(600px) rotateX(0deg) translateY(60px); }
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 70px;
+      background: rgba(1,10,20,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+      letter-spacing: 2px;
+    }
+
+    .nav-logo span { color: #fff; }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+    }
+
+    .nav-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--neon);
+      border: 1px solid var(--neon);
+      padding: 4px 12px;
+      border-radius: 2px;
+      box-shadow: var(--neon-glow);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px 60px;
+      overflow: hidden;
+    }
+
+    .hero-orb {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,100,255,0.15) 0%, rgba(0,200,255,0.05) 40%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbPulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes orbPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    }
+
+    .hero-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--neon);
+      border: 1px solid rgba(0,200,255,0.4);
+      padding: 6px 18px;
+      border-radius: 2px;
+      letter-spacing: 3px;
+      margin-bottom: 28px;
+      animation: fadeDown 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 18px;
+      animation: fadeDown 0.9s 0.1s ease forwards;
+      opacity: 0;
+    }
+
+    .hero h1 .blue { color: var(--neon); text-shadow: var(--neon-glow-strong); }
+    .hero h1 .white { color: #fff; }
+
+    .hero-slogan {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 500;
+      color: #a0d8ef;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      animation: fadeDown 1s 0.2s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-delivery {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--gold);
+      background: rgba(255,215,0,0.08);
+      border: 1px solid rgba(255,215,0,0.3);
+      padding: 10px 24px;
+      border-radius: 4px;
+      margin-bottom: 40px;
+      animation: fadeDown 1s 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-delivery::before {
+      content: '⚡';
+      font-size: 1rem;
+    }
+
+    .btn-buy {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #000;
+      background: linear-gradient(135deg, #00c8ff, #0066ff);
+      border: none;
+      padding: 18px 50px;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 0 20px rgba(0,200,255,0.5), 0 0 40px rgba(0,200,255,0.2);
+      animation: fadeDown 1s 0.4s ease forwards;
+      opacity: 0;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-buy::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #ffffff33, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-buy:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 30px rgba(0,200,255,0.8), 0 0 60px rgba(0,200,255,0.4);
+    }
+
+    .btn-buy:hover::before { opacity: 1; }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SECTION COMMON */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--neon);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0.8;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .section-title span { color: var(--neon); text-shadow: var(--neon-glow); }
+
+    .section-divider {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon), transparent);
+      margin-bottom: 50px;
+      box-shadow: var(--neon-glow);
+    }
+
+    /* PACKAGES */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+
+    .package-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .package-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,200,255,0.06), transparent 60%);
+      pointer-events: none;
+    }
+
+    .package-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--neon);
+      box-shadow: 0 0 30px rgba(0,200,255,0.2), inset 0 0 30px rgba(0,200,255,0.05);
+    }
+
+    .package-card.featured {
+      border-color: var(--neon);
+      box-shadow: 0 0 20px rgba(0,200,255,0.15);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: #000;
+      background: var(--neon);
+      padding: 4px 10px;
+      border-radius: 2px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .card-badge.best {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 10px rgba(255,215,0,0.4);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 18px;
+      display: block;
+    }
+
+    .card-tier {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--neon);
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      opacity: 0.7;
+    }
+
+    .card-ruby {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .card-bonus {
+      display: inline-block;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4cff8f;
+      background: rgba(76,255,143,0.1);
+      border: 1px solid rgba(76,255,143,0.3);
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .card-price {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+      margin-bottom: 24px;
+    }
+
+    .card-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+      margin-bottom: 24px;
+    }
+
+    .card-features {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .card-features li {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-features li::before {
+      content: '▸';
+      color: var(--neon);
+      font-size: 0.8rem;
+    }
+
+    .btn-card {
+      width: 100%;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--neon);
+      background: transparent;
+      border: 1px solid var(--neon);
+      padding: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+    }
+
+    .btn-card:hover {
+      background: var(--neon);
+      color: #000;
+      box-shadow: var(--neon-glow-strong);
+    }
+
+    /* PAYMENT SECTION */
+    .payment-box {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      max-width: 700px;
+    }
+
+    .payment-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--neon), transparent);
+    }
+
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0,200,255,0.04);
+      border: 1px solid rgba(0,200,255,0.15);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .pm-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--neon2), var(--neon));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .pm-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .pm-value {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      margin-left: auto;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--neon);
+      background: transparent;
+      border: 1px solid rgba(0,200,255,0.3);
+      padding: 6px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+
+    .copy-btn:hover {
+      background: rgba(0,200,255,0.1);
+    }
+
+    .payment-notice {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold);
+      background: rgba(255,215,0,0.07);
+      border: 1px solid rgba(255,215,0,0.25);
+      padding: 14px 20px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* FORM SECTION */
+    .form-wrapper {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 50px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--neon2), var(--neon), var(--neon2));
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--neon);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    input[type="file"] {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      background: rgba(0,20,40,0.8);
+      border: 1px solid rgba(0,200,255,0.2);
+      padding: 14px 18px;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      width: 100%;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus {
+      border-color: var(--neon);
+      box-shadow: 0 0 0 2px rgba(0,200,255,0.15);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M6 8L0 0h12z' fill='%2300c8ff'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    select option { background: #020e1c; color: var(--text); }
+
+    .file-upload-area {
+      border: 2px dashed rgba(0,200,255,0.25);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+      position: relative;
+    }
+
+    .file-upload-area:hover {
+      border-color: var(--neon);
+      background: rgba(0,200,255,0.04);
+    }
+
+    .file-upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: none;
+    }
+
+    .file-upload-icon { font-size: 2rem; margin-bottom: 8px; }
+    .file-upload-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+    .file-upload-hint {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(0,200,255,0.4);
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+    #file-name-display {
+      margin-top: 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--neon);
+      min-height: 18px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #000;
+      background: linear-gradient(135deg, #00c8ff, #0066ff);
+      border: none;
+      padding: 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(0,200,255,0.4);
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(0,200,255,0.7);
+    }
+
+    .btn-submit:active { transform: translateY(0); }
+
+    /* RULES */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .rule-card {
+      background: var(--glass);
+      border: 1px solid rgba(255,59,59,0.2);
+      border-radius: 10px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .rule-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--red);
+      box-shadow: 0 0 10px var(--red);
+    }
+
+    .rule-card:hover {
+      border-color: rgba(255,59,59,0.4);
+      transform: translateX(4px);
+    }
+
+    .rule-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      font-weight: 900;
+      color: rgba(255,59,59,0.15);
+      position: absolute;
+      top: 16px;
+      right: 20px;
+    }
+
+    .rule-icon { font-size: 1.5rem; margin-bottom: 12px; display: block; }
+
+    .rule-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .rule-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      background: var(--dark2);
+      border-top: 1px solid var(--glass-border);
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+      margin-bottom: 10px;
+    }
+
+    .footer-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    /* SUCCESS POPUP */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .popup-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .popup-box {
+      background: var(--dark3);
+      border: 1px solid var(--neon);
+      border-radius: 16px;
+      padding: 50px 40px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      transform: scale(0.8);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 60px rgba(0,200,255,0.3), inset 0 0 60px rgba(0,200,255,0.03);
+    }
+
+    .popup-overlay.active .popup-box {
+      transform: scale(1);
+    }
+
+    .popup-check {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00c8ff22, #00c8ff11);
+      border: 2px solid var(--neon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 24px;
+      box-shadow: var(--neon-glow-strong);
+      animation: checkPop 0.6s 0.3s both;
+    }
+
+    @keyframes checkPop {
+      from { transform: scale(0) rotate(-30deg); opacity: 0; }
+      to { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .popup-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+      margin-bottom: 16px;
+    }
+
+    .popup-msg {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+
+    .popup-close {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #000;
+      background: linear-gradient(135deg, #00c8ff, #0066ff);
+      border: none;
+      padding: 14px 40px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(0,200,255,0.4);
+    }
+
+    .popup-close:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0,200,255,0.7);
+    }
+
+    /* SEPARATOR LINE */
+    .full-divider {
+      position: relative;
+      z-index: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,200,255,0.2), transparent);
+      margin: 0 40px;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-wrapper { padding: 30px 20px; }
+      .payment-box { padding: 24px 20px; }
+      .packages-grid { grid-template-columns: 1fr; }
+      section { padding: 60px 16px; }
+    }
+
+    /* GLITCH effect on title */
+    @keyframes glitch {
+      0%, 100% { clip-path: none; transform: none; }
+      92% { clip-path: none; transform: none; }
+      93% { clip-path: polygon(0 20%, 100% 20%, 100% 30%, 0 30%); transform: translateX(-3px); }
+      94% { clip-path: polygon(0 60%, 100% 60%, 100% 70%, 0 70%); transform: translateX(3px); }
+      95% { clip-path: none; transform: none; }
+    }
+
+    .hero h1 { animation: fadeDown 0.9s 0.1s ease forwards, glitch 8s 2s infinite; }
+
+    /* COUNTER ANIMATION */
+    .stat-bar {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 50px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(0,200,255,0.1);
+    }
+
+    .stat-item {
+      text-align: center;
+      animation: fadeDown 1s 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: var(--neon-glow);
+    }
+
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<!-- SUCCESS POPUP -->
+<div class="popup-overlay" id="successPopup">
+  <div class="popup-box">
+    <div class="popup-check">✓</div>
+    <div class="popup-title">ORDER RECEIVED</div>
+    <div class="popup-msg">
+      Order Successfully Received.<br/>
+      Your payment proof has been submitted successfully.<br/><br/>
+      <strong style="color:#fff">Ruby delivery may take up to 2 hours after verification.</strong>
+    </div>
+    <button class="popup-close" onclick="closePopup()">CLOSE</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">RECHO<span>RUBY</span>SELLER</div>
+  <ul class="nav-links">
+    <li><a href="#packages">Packages</a></li>
+    <li><a href="#payment">Payment</a></li>
+    <li><a href="#order">Order</a></li>
+    <li><a href="#rules">Rules</a></li>
+  </ul>
+  <div class="nav-badge">● ONLINE</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-tag">// PREMIUM RUBY MARKETPLACE</div>
+  <h1>
+    <span class="blue">RECHO</span><span class="white">RUBY</span><br/>
+    <span class="blue">SELLER</span>
+  </h1>
+  <div class="hero-slogan">Fast &amp; Trusted Ruby Delivery</div>
+  <div class="hero-delivery">Delivery within 2 hours after payment verification</div>
+  <a href="#packages" class="btn-buy">BUY RUBY NOW</a>
+
+  <div class="stat-bar">
+    <div class="stat-item">
+      <div class="stat-num">500+</div>
+      <div class="stat-label">ORDERS COMPLETED</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">TRUSTED DELIVERY</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;2H</div>
+      <div class="stat-label">DELIVERY TIME</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">SUPPORT</div>
+    </div>
+  </div>
+</div>
+
+<div class="full-divider"></div>
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="section-label">// SELECT YOUR TIER</div>
+  <div class="section-title">RUBY <span>PACKAGES</span></div>
+  <div class="section-divider"></div>
+
+  <div class="packages-grid">
+
+    <!-- CARD 1 -->
+    <div class="package-card">
+      <div class="card-badge">+5% BONUS</div>
+      <span class="card-icon">💎</span>
+      <div class="card-tier">// TIER-01 / STARTER</div>
+      <div class="card-ruby">67 Lakh Ruby</div>
+      <div class="card-bonus">+5% Bonus Ruby Included</div>
+      <div class="card-price">$1,005</div>
+      <div class="card-divider"></div>
+      <ul class="card-features">
+        <li>67,00,000 Ruby Credits</li>
+        <li>Instant after verification</li>
+        <li>Secure EPAY payment</li>
+        <li>Delivery max 2 hours</li>
+      </ul>
+      <button class="btn-card" onclick="selectPackage('67 Lakh Ruby — $1005')">SELECT PACKAGE</button>
+    </div>
+
+    <!-- CARD 2 (Featured) -->
+    <div class="package-card featured">
+      <div class="card-badge best">★ BEST VALUE</div>
+      <span class="card-icon">🔷</span>
+      <div class="card-tier">// TIER-02 / PREMIUM</div>
+      <div class="card-ruby">134 Lakh Ruby</div>
+      <div class="card-bonus">+5% Bonus Ruby Included</div>
+      <div class="card-price">$2,010</div>
+      <div class="card-divider"></div>
+      <ul class="card-features">
+        <li>1,34,00,000 Ruby Credits</li>
+        <li>Instant after verification</li>
+        <li>Secure EPAY payment</li>
+        <li>Priority processing</li>
+      </ul>
+      <button class="btn-card" onclick="selectPackage('134 Lakh Ruby — $2010')">SELECT PACKAGE</button>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="package-card">
+      <div class="card-badge">+5% BONUS</div>
+      <span class="card-icon">👑</span>
+      <div class="card-tier">// TIER-03 / ELITE</div>
+      <div class="card-ruby">201 Lakh Ruby</div>
+      <div class="card-bonus">+5% Bonus Ruby Included</div>
+      <div class="card-price">$3,015</div>
+      <div class="card-divider"></div>
+      <ul class="card-features">
+        <li>2,01,00,000 Ruby Credits</li>
+        <li>Instant after verification</li>
+        <li>Secure EPAY payment</li>
+        <li>VIP delivery lane</li>
+      </ul>
+      <button class="btn-card" onclick="selectPackage('201 Lakh Ruby — $3015')">SELECT PACKAGE</button>
+    </div>
+
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- PAYMENT -->
+<section id="payment">
+  <div class="section-label">// PAYMENT GATEWAY</div>
+  <div class="section-title">PAYMENT <span>DETAILS</span></div>
+  <div class="section-divider"></div>
+
+  <div class="payment-box">
+    <div class="payment-method">
+      <div class="pm-icon">💳</div>
+      <div>
+        <div class="pm-label">// EPAY METHOD</div>
+        <div class="pm-value">recholive.net@gmail.com</div>
+      </div>
+      <button class="copy-btn" onclick="copyPayment()">COPY</button>
+    </div>
+
+    <div class="payment-notice">
+      ⚠️ &nbsp; Send payment carefully and upload valid proof.
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <div class="section-label">// SUBMIT YOUR ORDER</div>
+  <div class="section-title">ORDER <span>FORM</span></div>
+  <div class="section-divider"></div>
+
+  <div class="form-wrapper">
+    <form
+      name="ruby-order"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      enctype="multipart/form-data"
+      id="orderForm"
+    >
+      <!-- Netlify hidden fields -->
+      <input type="hidden" name="form-name" value="ruby-order"/>
+      <p style="display:none"><input name="bot-field"/></p>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="agency">Agency Name</label>
+          <input type="text" id="agency" name="agency_name" placeholder="Your Agency Name" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="recho-id">Recho ID Number</label>
+          <input type="text" id="recho-id" name="recho_id" placeholder="e.g. RCH-000000" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="epay-email">EPAY Gmail ID</label>
+          <input type="email" id="epay-email" name="epay_gmail" placeholder="yourmail@gmail.com" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="package">Package Selection</label>
+          <select id="package" name="package" required>
+            <option value="" disabled selected>-- Select Package --</option>
+            <option value="67 Lakh Ruby — $1005">67 Lakh Ruby — $1,005 (+5% Bonus)</option>
+            <option value="134 Lakh Ruby — $2010">134 Lakh Ruby — $2,010 (+5% Bonus)</option>
+            <option value="201 Lakh Ruby — $3015">201 Lakh Ruby — $3,015 (+5% Bonus)</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label for="txn-id">Transaction ID</label>
+          <input type="text" id="txn-id" name="transaction_id" placeholder="Payment Transaction ID" required/>
+        </div>
+
+        <div class="form-group full">
+          <label>Payment Screenshot</label>
+          <div class="file-upload-area">
+            <input
+              type="file"
+              id="screenshot"
+              name="screenshot"
+              accept="image/*"
+              required
+              onchange="updateFileName(this)"
+            />
+            <div class="file-upload-icon">📎</div>
+            <div class="file-upload-text">Click to upload screenshot</div>
+            <div class="file-upload-hint">// SINGLE IMAGE ONLY — JPG / PNG / WEBP</div>
+            <div id="file-name-display"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn-submit">⚡ SUBMIT ORDER</button>
+    </form>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- RULES -->
+<section id="rules">
+  <div class="section-label">// TERMS & CONDITIONS</div>
+  <div class="section-title">IMPORTANT <span>RULES</span></div>
+  <div class="section-divider"></div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <span class="rule-num">01</span>
+      <span class="rule-icon">⚠️</span>
+      <div class="rule-title">BUYER RESPONSIBILITY</div>
+      <div class="rule-text">Wrong information submitted in the order form is entirely the buyer's responsibility. Double-check all details before submitting.</div>
+    </div>
+
+    <div class="rule-card">
+      <span class="rule-num">02</span>
+      <span class="rule-icon">🚫</span>
+      <div class="rule-title">NO FAKE PROOF</div>
+      <div class="rule-text">Submitting fake payment proof will result in an immediate and permanent blacklist from our platform.</div>
+    </div>
+
+    <div class="rule-card">
+      <span class="rule-num">03</span>
+      <span class="rule-icon">🔒</span>
+      <div class="rule-title">NO REFUND POLICY</div>
+      <div class="rule-text">Refunds are not available after successful Ruby delivery has been confirmed and completed.</div>
+    </div>
+
+    <div class="rule-card">
+      <span class="rule-num">04</span>
+      <span class="rule-icon">⏱️</span>
+      <div class="rule-title">DELIVERY TIME</div>
+      <div class="rule-text">Ruby delivery may take up to 2 hours after payment verification is completed by our team.</div>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">RECHORUBISELLER</div>
+  <div class="footer-text" style="margin-top:8px; margin-bottom:4px">FAST &amp; TRUSTED RUBY DELIVERY</div>
+  <div class="footer-text">© 2025 RECHORUBISELLER — ALL RIGHTS RESERVED</div>
+</footer>
+
+<script>
+  // Select package from card
+  function selectPackage(pkg) {
+    const sel = document.getElementById('package');
+    for (let opt of sel.options) {
+      if (opt.value.startsWith(pkg.split('—')[0].trim())) {
+        sel.value = opt.value;
+        break;
+      }
+    }
+    document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Copy payment email
+  function copyPayment() {
+    navigator.clipboard.writeText('recholive.net@gmail.com').then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✓ COPIED';
+      btn.style.color = '#4cff8f';
+      setTimeout(() => { btn.textContent = 'COPY'; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  // Show filename
+  function updateFileName(input) {
+    const display = document.getElementById('file-name-display');
+    if (input.files.length > 0) {
+      display.textContent = '// ' + input.files[0].name;
+    } else {
+      display.textContent = '';
+    }
+  }
+
+  // Success popup
+  function closePopup() {
+    document.getElementById('successPopup').classList.remove('active');
+  }
+
+  // Form submission handling
+  const form = document.getElementById('orderForm');
+  form.addEventListener('submit', function(e) {
+    // Check if running on Netlify (has netlify attribute)
+    const isNetlify = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+    if (!isNetlify) {
+      // For local preview: just show popup
+      e.preventDefault();
+      document.getElementById('successPopup').classList.add('active');
+      form.reset();
+      document.getElementById('file-name-display').textContent = '';
+      return;
+    }
+
+    // On Netlify: let form submit, then show popup on return
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(() => {
+      document.getElementById('successPopup').classList.add('active');
+      form.reset();
+      document.getElementById('file-name-display').textContent = '';
+    })
+    .catch(() => {
+      alert('Submission error. Please try again.');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -287,26 +287,31 @@
     }
 
     .pay-row {
-      display: flex; align-items: center; gap: 18px;
+      display: flex; align-items: center; gap: 14px;
       background: var(--green-light); border: 1.5px solid #a7dfd0;
-      border-radius: var(--radius-sm); padding: 18px 20px; margin-bottom: 16px;
+      border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 16px;
+      flex-wrap: wrap;
     }
     .pay-ico {
-      width: 48px; height: 48px; border-radius: 12px;
+      width: 44px; height: 44px; border-radius: 12px;
       background: linear-gradient(135deg, var(--green), var(--blue));
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; flex-shrink: 0;
+      font-size: 1.2rem; flex-shrink: 0;
       box-shadow: 0 4px 14px rgba(26,158,114,0.25);
     }
+    .pay-info { flex: 1; min-width: 0; }
     .pay-lbl { font-size: 0.7rem; font-weight: 700; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-    .pay-val { font-size: 1.05rem; font-weight: 700; color: var(--green); }
+    .pay-val {
+      font-size: 1rem; font-weight: 700; color: var(--green);
+      word-break: break-all; overflow-wrap: anywhere;
+    }
     .btn-copy {
-      margin-left: auto; flex-shrink: 0;
+      flex-shrink: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.75rem; font-weight: 700; color: var(--green);
       background: var(--white); border: 1.5px solid #a7dfd0;
-      padding: 8px 18px; border-radius: 50px; cursor: pointer;
-      transition: all 0.22s;
+      padding: 8px 16px; border-radius: 50px; cursor: pointer;
+      transition: all 0.22s, transform 0.15s; white-space: nowrap;
     }
     .btn-copy:hover { background: var(--green); color: #fff; border-color: var(--green); }
 
@@ -605,7 +610,7 @@
   <div class="pay-card reveal">
     <div class="pay-row">
       <div class="pay-ico">💳</div>
-      <div>
+      <div class="pay-info">
         <div class="pay-lbl">EPAY Method</div>
         <div class="pay-val">recholive.net@gmail.com</div>
       </div>
@@ -659,7 +664,14 @@
             <option value="201 Lakh Ruby — $3015">201 Lakh Ruby — $3,015 (+5% Bonus)</option>
           </select>
         </div>
-          </div>
+
+        <div class="fg full">
+          <label for="seller-account">Do you want a Seller Account? <span style="font-weight:400;color:var(--text-3)">(Optional)</span></label>
+          <select id="seller-account" name="seller_account">
+            <option value="">— Leave empty to skip —</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
         </div>
       </div>
 
@@ -736,26 +748,48 @@
     document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Copy email
+  // Copy email — works on HTTP, HTTPS, and all browsers
   function copyEmail() {
-    navigator.clipboard.writeText('recholive.net@gmail.com').then(() => {
-      const btn = document.querySelector('.btn-copy');
+    const email = 'recholive.net@gmail.com';
+    const btn = document.querySelector('.btn-copy');
+
+    function applySuccess() {
       btn.textContent = '✓ Copied!';
-      btn.style.background = 'var(--green)';
-      btn.style.color = '#fff';
-      btn.style.borderColor = 'var(--green)';
+      btn.style.background = '#1a9e72';
+      btn.style.color = '#ffffff';
+      btn.style.borderColor = '#1a9e72';
+      btn.style.transform = 'scale(1.06)';
       setTimeout(() => {
         btn.textContent = 'Copy';
         btn.style.background = '';
         btn.style.color = '';
         btn.style.borderColor = '';
+        btn.style.transform = '';
       }, 2200);
-    });
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(email).then(applySuccess).catch(() => fallbackCopy(email, applySuccess));
+    } else {
+      fallbackCopy(email, applySuccess);
+    }
+  }
+
+  function fallbackCopy(text, callback) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); callback(); } catch(e) { alert('Copy manually: ' + text); }
+    document.body.removeChild(ta);
   }
 
   // File name display
   function showFile(input) {
-    document.getElementById('file-name').textContent = input.files.length ? input.files[0].name : '';
+    const el = document.getElementById('file-name');
+    if (el) el.textContent = input.files.length ? input.files[0].name : '';
   }
 
   // Popup
@@ -769,7 +803,6 @@
       .finally(() => {
         document.getElementById('popup').classList.add('open');
         this.reset();
-        document.getElementById('file-name').textContent = '';
       });
   });
 </script>
